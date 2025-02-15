@@ -1,3 +1,4 @@
+
 # Health Care Management System
 
 ## Description
@@ -62,5 +63,8 @@ To run this application locally, follow these steps:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **Getting Started**: Explains how to run the project locally for testing or development.
+- **Future Work**: Mention any functionality you plan to add in the future, such as database integration or user authentication.
+- **License**: If you're sharing your code publicly, you can specify the license under which the project is shared. (The MIT license is commonly used for open-source projects.)
 
-
+This README 
