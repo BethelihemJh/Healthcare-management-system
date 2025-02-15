@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="WebProject" default="build">
+
+    <!-- Directories for source files and build artifacts -->
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="deploy.dir" value="/var/www/html/"/> <!-- Configurable deployment path -->
+
+    <!-- Clean target: Deletes the build and dist directories -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Compile target: Copy HTML, CSS, JS, and PHP files from src to build -->
+    <target name="compile" depends="clean">
+        <mkdir dir="${build.dir}"/>
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**/*.html"/>
+                <include name="**/*.css"/>
+                <include name="**/*.js"/>
+                <include name="**/*.php"/> <!-- Include PHP files -->
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Minify CSS and JS -->
+    <target name="minify" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+
+        <!-- Minify all CSS files using YUI Compressor -->
+        <taskdef name="yui" classname="com.yahoo.platform.yui.compressor.ant.YUICompressorTask" classpath="${lib.dir}/yuicompressor.jar"/>
+        <apply executable="java" parallel="false" failonerror="true">
+            <fileset dir="${build.dir}" includes="**/*.css"/>
+            <arg line="-jar"/>
+            <arg path="${lib.dir}/yuicompressor.jar"/>
+            <srcfile/>
+            <arg value="-o"/>
+            <mapper type="glob" from="*.css" to="*.min.css"/>
+            <targetfile/>
+        </apply>
+
+        <!-- Minify all JS files using UglifyJS -->
+        <apply executable="uglifyjs" parallel="false" failonerror="true">
+            <fileset dir="${build.dir}" includes="**/*.js"/>
+            <arg value="-o"/>
+            <mapper type="glob" from="*.js" to="*.min.js"/>
+            <targetfile/>
+        </apply>
+    </target>
+
+    <!-- Package target: Move minified files into the dist folder for production -->
+    <target name="package" depends="minify">
+        <mkdir dir="${dist.dir}"/>
+        <copy todir="${dist.dir}">
+            <fileset dir="${build.dir}">
+                <include name="**/*.html"/>
+                <include name="**/*.php"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Deploy target: Copy the dist files to the web server -->
+    <target name="deploy" depends="package">
+        <scp todir="user@yourserver:${deploy.dir}" trust="true">
+            <fileset dir="${dist.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </scp>
+    </target>
+
+</project>
