@@ -30,10 +30,10 @@
     <!-- Minify CSS and JS -->
     <target name="minify" depends="compile">
         <mkdir dir="${dist.dir}"/>
-        
+
         <!-- Minify all CSS files using YUI Compressor -->
         <taskdef name="yui" classname="com.yahoo.platform.yui.compressor.ant.YUICompressorTask" classpath="${lib.dir}/yuicompressor.jar"/>
-        <apply executable="java" parallel="false" dest="${dist.dir}" failonerror="true">
+        <apply executable="java" parallel="false" failonerror="true">
             <fileset dir="${build.dir}" includes="**/*.css"/>
             <arg line="-jar"/>
             <arg path="${lib.dir}/yuicompressor.jar"/>
@@ -42,9 +42,9 @@
             <mapper type="glob" from="*.css" to="*.min.css"/>
             <targetfile/>
         </apply>
-        
+
         <!-- Minify all JS files using UglifyJS -->
-        <apply executable="uglifyjs" parallel="false" dest="${dist.dir}" failonerror="true">
+        <apply executable="uglifyjs" parallel="false" failonerror="true">
             <fileset dir="${build.dir}" includes="**/*.js"/>
             <arg value="-o"/>
             <mapper type="glob" from="*.js" to="*.min.js"/>
